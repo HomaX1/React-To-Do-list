@@ -1,0 +1,13 @@
+.new-task {
+  &__form {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    margin: 0 auto;
+  }
+
+  &__submit {
+    align-self: end;
+    padding: 6px 40px;
+  }
+}
