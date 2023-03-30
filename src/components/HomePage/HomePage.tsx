@@ -12,7 +12,7 @@ function HomePage() {
         <button className="btn btn-primary mb-5 home__button">
           <Link to={`/add-new-task`} className="home__link">Add New Task</Link>
         </button>
-        <List/>
+        <List />
       </div>
     </div>
   );
