@@ -1,6 +1,6 @@
 import React from 'react';
 import '../scss/App.scss';
-import Tabs from './tabs/navigation';
+import Tabs from './Tabs/Tabs';
 import { Outlet } from 'react-router-dom';
 
 function App() {

@@ -4,9 +4,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import './scss/index.scss';
 import App from './components/App';
-import AddNewTask from './components/new-task/add-new-task';
-import ErrorPage from './components/error/error-page';
-import List from './components/list/list';
+import AddNewTask from './components/AddNewTask/AddNewTask';
+import ErrorPage from './components/Error/ErrorPage';
+import HomePage from './components/HomePage/HomePage';
 
 const router = createBrowserRouter([
   {
@@ -16,7 +16,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <List />,
+        element: <HomePage />,
       },
       {
         path: 'add-new-task',

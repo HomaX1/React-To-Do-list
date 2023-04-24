@@ -1,0 +1,7 @@
+.list {
+  &__item,
+  label,
+  input[type="checkbox"] {
+    cursor: pointer;
+  }
+}
