@@ -1,7 +1,8 @@
 import React from 'react';
 import './Message.scss';
+import MessageProps from './MessageProps';
 
-function Message(props: any) {
+function Message(props: MessageProps) {
   const isShowMessage:boolean = false;
 
   if (props.showMessage) {

@@ -3,6 +3,7 @@ import './List.scss';
 import TaskObject from './TaskInterface';
 import Requests from '../Services/Requests';
 import Message from '../Message/Message';
+import ListProps from './ListProps';
 
 const srcPath = 'https://dummyjson.com/todos';
 const getUrlPath = `${srcPath}?limit=8`;
@@ -10,29 +11,40 @@ const optionsGET = {
   method: 'GET'
 };
 
-function List() {
+function List(props: ListProps) {
+  const [fetchTasks, setFetchTasks] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [tasks, setTasks] = useState<TaskObject[]>([]);
   const [error, setError] = useState(false);
   const [checked, setCheckboxChange] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState('Task is NOT deleted');
-
+  let filteredTasks:TaskObject[] = [];
 
   useEffect(() => {
-    Requests(getUrlPath, optionsGET)
-      .then((data) => {
-        console.log(data.todos, 'data');
-        setTimeout(() => {
-          setIsLoading(false);
-          setTasks(data.todos);
-        }, 1500);
-      })
-      .catch((err) => {
-        setError(true);
-        console.log(err.message);
-      })
-  }, []);
+    if (!fetchTasks) {
+      Requests(getUrlPath, optionsGET)
+        .then((data) => {
+          setTimeout(() => {
+            setFetchTasks(true);
+            setIsLoading(false);
+            setTasks(data.todos);
+          }, 1500);
+        })
+        .catch((err) => {
+          setError(true);
+          console.log(err.message);
+        })
+    }
+  }, [fetchTasks]);
+
+  if (props.searchTaskValue.length) {
+    filteredTasks = tasks.filter((task: TaskObject) => {
+      return task.todo.toLowerCase().indexOf(`${props.searchTaskValue}`) !== -1;
+    });
+  } else {
+    filteredTasks = tasks;
+  }
 
   if (isLoading) {
     return (
@@ -104,10 +116,10 @@ function List() {
         <Message status={deleteStatus} deleteError={error} showMessage={showMessage} handleCallBack={MessageCallBack}/>
       }
       <ul className="mt-5 mb-4 list-group list">
-        {!isLoading && !tasks.length ?
+        {!isLoading && !filteredTasks.length ?
           <p className="text-center">There is no any tasks here!</p>
           :
-          (tasks.map((task: TaskObject) => {
+          (filteredTasks.map((task: TaskObject) => {
             return (
               <li className="list-group-item list__item" key={task.id}>
                 <label className="me-3 list__label" onClick={() => handleCheckbox(task)}>
