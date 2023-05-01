@@ -5,7 +5,7 @@ import List from './List';
 
 describe('<List />', () => {
   test('it should mount', () => {
-    render(<List />);
+    render(<List searchTaskValue='' />);
     
     const list = screen.getByTestId('List');
 
