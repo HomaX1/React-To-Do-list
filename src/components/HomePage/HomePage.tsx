@@ -1,6 +1,6 @@
 import './HomePage.scss';
 import Search from '../Search/Search';
-import { Link } from 'react-router-dom';
+import {NavLink} from 'react-router-dom';
 import List from '../List/List';
 import React, {useState} from 'react';
 
@@ -16,13 +16,13 @@ function HomePage() {
       <h1 className="h1 pt-4 title home__title">To-Do List</h1>
       <div className="home__wrap">
         <Search handleCallBack={taskValueCallBack}/>
-        <button className="btn btn-primary home__button">
-          <Link to={`/add-new-task`} className="home__link">
+        <NavLink to={`/add-new-task`} className="home__link">
+          <button className="btn btn-primary home__button">
             <i className="bi bi-plus me-1"></i>
             <span>Add New Task</span>
-          </Link>
-        </button>
-        <List searchTaskValue={searchTaskValue}/>
+          </button>
+        </NavLink>
+        <List searchTaskValue={searchTaskValue} />
       </div>
     </div>
   );
