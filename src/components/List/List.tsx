@@ -32,7 +32,6 @@ function List(props: ListProps) {
           }, 1500);
         })
         .catch((err) => {
-          setError(true);
           console.log(err.message);
         })
     }
@@ -76,7 +75,6 @@ function List(props: ListProps) {
         setTasks(newTasks);
       })
       .catch((err) => {
-        setError(true);
         console.log(err.message);
       })
   }
@@ -100,7 +98,6 @@ function List(props: ListProps) {
         setDeleteStatus(`Something went wrong! Couldn't delete the task.`);
         setError(true);
         console.log(err.message);
-
       })
   }
 

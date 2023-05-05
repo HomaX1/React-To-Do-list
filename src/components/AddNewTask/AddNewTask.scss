@@ -6,6 +6,10 @@
     margin: 0 auto;
   }
 
+  &__link {
+    align-self: end;
+  }
+
   &__submit {
     align-self: end;
     padding: 6px 35px 6px 28px;
