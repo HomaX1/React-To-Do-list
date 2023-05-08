@@ -3,7 +3,8 @@ import './AddNewTask.scss';
 import {useForm, SubmitHandler} from 'react-hook-form';
 import NewTaskInterface from './NewTaskInterface';
 import Requests from '../Services/Requests';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useLocation} from 'react-router-dom';
+import OptionObject from '../Services/OptionObjectInterface';
 
 function AddNewTask() {
   const navigate = useNavigate();
@@ -17,23 +18,39 @@ function AddNewTask() {
 
   console.log(watch('taskName'));
 
+  const location = useLocation();
+  const editTaskName = location.state;
+
   function newTaskSubmit(newTask:NewTaskInterface): SubmitHandler<NewTaskInterface> | void {
     const capitalizedTaskName = newTask.taskName.charAt(0).toUpperCase() + newTask.taskName.slice(1);
-    const putUrlPath = `${srcPath}/add`;
     const getId = Math.floor(Math.random() * 100);
-    const requestObject = {
-      method: 'POST',
-      body: JSON.stringify({
-        todo: capitalizedTaskName,
-        completed: false,
-        userId: getId
-      })
-    };
+    let putUrlPath = '';
+    let requestObject: OptionObject;
+
+    if (editTaskName) {
+      const taskToDo = newTask.taskName ? capitalizedTaskName : editTaskName.todo;
+      putUrlPath = `${srcPath}/${editTaskName.id}`;
+      requestObject = {
+        method: 'PUT',
+        body: JSON.stringify({
+          todo: taskToDo,
+        })
+      };
+    } else {
+      putUrlPath = `${srcPath}/add`;
+      requestObject = {
+        method: 'POST',
+        body: JSON.stringify({
+          todo: capitalizedTaskName,
+          completed: false,
+          userId: getId
+        })
+      };
+    }
 
     Requests(putUrlPath, requestObject)
       .then((data) => {
-        console.log(data, 'data from POST request');
-        navigate('/');
+        navigate('/', {state: data});
       })
       .catch((err) => {
         console.log(err.message, 'error');
@@ -47,6 +64,7 @@ function AddNewTask() {
         <label className="mb-3 new-task__label">
           <input className="form-control new-task__input"
                  {...register('taskName', {minLength: 3})}
+                 defaultValue={editTaskName ? editTaskName.todo : ''}
                  type="text"
                  placeholder="Task name"/>
         </label>

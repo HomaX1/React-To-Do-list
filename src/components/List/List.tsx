@@ -4,6 +4,7 @@ import TaskObject from './TaskInterface';
 import Requests from '../Services/Requests';
 import Message from '../Message/Message';
 import ListProps from './ListProps';
+import {useNavigate} from 'react-router-dom';
 
 const srcPath = 'https://dummyjson.com/todos';
 const getUrlPath = `${srcPath}?limit=8`;
@@ -12,6 +13,7 @@ const optionsGET = {
 };
 
 function List(props: ListProps) {
+  const navigate = useNavigate();
   const [fetchTasks, setFetchTasks] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [tasks, setTasks] = useState<TaskObject[]>([]);
@@ -101,6 +103,10 @@ function List(props: ListProps) {
       })
   }
 
+  function handleEditTask(currentTask: TaskObject) {
+    navigate('/add-new-task', { state: currentTask });
+  }
+
   function MessageCallBack(childData: boolean) {
     setTimeout(() => {
       setShowMessage(childData);
@@ -125,7 +131,7 @@ function List(props: ListProps) {
                   <span className="ms-3 list__text">{task.todo}</span>
                 </label>
                 <div className="list__icons">
-                  <i className="bi bi-plus-circle me-2 list__icon"></i>
+                  <i className="bi bi-pencil-square me-2 list__icon" onClick={() => handleEditTask(task)}></i>
                   <i className="bi bi-trash3 list__icon" onClick={() => handleRemoveTask(task)}></i>
                 </div>
               </li>
