@@ -22,6 +22,7 @@ function List(props: ListProps) {
   const [showMessage, setShowMessage] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState('Task is NOT deleted');
   let filteredTasks:TaskObject[] = [];
+  let messageTimeOut:ReturnType<typeof setTimeout>;
 
   useEffect(() => {
     if (!fetchTasks) {
@@ -92,6 +93,7 @@ function List(props: ListProps) {
         const newTasks = tasks.filter((task: TaskObject) => {
           return task.id !== data.id;
         });
+        clearTimeout(messageTimeOut);
         setDeleteStatus('Task is successfully deleted!');
         setShowMessage(true);
         setTasks(newTasks);
@@ -108,7 +110,7 @@ function List(props: ListProps) {
   }
 
   function MessageCallBack(childData: boolean) {
-    setTimeout(() => {
+    messageTimeOut = setTimeout(() => {
       setShowMessage(childData);
     }, 5000);
   }
