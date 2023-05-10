@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './AddNewTask.scss';
 import {useForm, SubmitHandler} from 'react-hook-form';
 import NewTaskInterface from './NewTaskInterface';
@@ -12,6 +12,7 @@ function AddNewTask() {
   const {
     register,
     handleSubmit,
+    setFocus,
     watch,
     formState: { errors },
   } = useForm<NewTaskInterface>();
@@ -20,6 +21,17 @@ function AddNewTask() {
 
   const location = useLocation();
   const editTaskName = location.state;
+  const [isDisable, setIsDisable] = useState(false);
+  let taskNameValue = watch('taskName');
+
+  React.useEffect(() => {
+    setFocus('taskName');
+    if (taskNameValue === editTaskName.todo) {
+      setIsDisable(true);
+    } else {
+      setIsDisable(false);
+    }
+  }, [setFocus, editTaskName, taskNameValue]);
 
   function newTaskSubmit(newTask:NewTaskInterface): SubmitHandler<NewTaskInterface> | void {
     const capitalizedTaskName = newTask.taskName.charAt(0).toUpperCase() + newTask.taskName.slice(1);
@@ -69,7 +81,7 @@ function AddNewTask() {
                  placeholder="Task name"/>
         </label>
         {errors.taskName && <p className="text-danger">Task should have minimum 3 characters</p>}
-        <button className="btn btn-primary new-task__submit" type="submit">
+        <button className="btn btn-primary new-task__submit" type="submit" disabled={isDisable || !taskNameValue}>
           <i className="bi bi-plus me-1 new-task__icon"></i>
           <span className="new-task__text">Add</span>
         </button>
