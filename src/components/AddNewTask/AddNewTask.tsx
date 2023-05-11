@@ -26,7 +26,7 @@ function AddNewTask() {
 
   React.useEffect(() => {
     setFocus('taskName');
-    if (taskNameValue === editTaskName.todo) {
+    if (editTaskName && taskNameValue === editTaskName.todo) {
       setIsDisable(true);
     } else {
       setIsDisable(false);

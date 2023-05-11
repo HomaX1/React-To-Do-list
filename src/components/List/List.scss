@@ -10,6 +10,10 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 16px;
+
+    &-color {
+      background-color: rgba(0, 123, 255, 0.1);
+    }
   }
 
   &__label {

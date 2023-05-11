@@ -18,7 +18,6 @@ function List(props: ListProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [tasks, setTasks] = useState<TaskObject[]>([]);
   const [error, setError] = useState(false);
-  const [checked, setCheckboxChange] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState('Task is NOT deleted');
   let filteredTasks:TaskObject[] = [];
@@ -38,7 +37,15 @@ function List(props: ListProps) {
           console.log(err.message);
         })
     }
-  }, [fetchTasks]);
+
+    if (props.selectedAll && props.removeAll) {
+      const selectAllTasks: boolean = !props.selectedAll;
+      const removeAllTasks: boolean = !props.removeAll;
+
+      props.handleSelectAllCallBack(selectAllTasks);
+      props.handleDeleteAllCallBack(removeAllTasks);
+    }
+  }, [fetchTasks, props.handleSelectAllCallBack, props.handleDeleteAllCallBack]);
 
   if (props.searchTaskValue.length) {
     filteredTasks = tasks.filter((task: TaskObject) => {
@@ -56,14 +63,41 @@ function List(props: ListProps) {
     );
   }
 
-  function handleCheckbox(currentTask: TaskObject) {
-    setCheckboxChange(!checked);
+  if (props.selectedAll && props.removeAll) {
+    const idArray = tasks.map((item) => {
+      return item.id;
+    })
 
+    const putUrlPath = `${srcPath}?objectIds=${idArray.join(',')}`;
+    const requestMethod = {
+      method: 'DELETE',
+    };
+
+    Requests(putUrlPath, requestMethod)
+      .then(() => {
+        const newTasks:TaskObject[] = [];
+        setError(false);
+        clearTimeout(messageTimeOut);
+        setDeleteStatus('All tasks are successfully deleted!');
+        setShowMessage(true);
+        setTasks(newTasks);
+      })
+      .catch((err) => {
+        clearTimeout(messageTimeOut);
+        setDeleteStatus(`Current API doesn't support Delete All method.`);
+        setShowMessage(true);
+        setError(true);
+        console.log(err.message);
+      })
+  }
+
+  function handleCheckbox(currentTask: TaskObject) {
+    const changedCheckbox = !currentTask.completed;
     const putUrlPath = `${srcPath}/${currentTask.id}`;
     const requestObject = {
       method: 'PUT',
       body: JSON.stringify({
-        completed: checked,
+        completed: changedCheckbox,
       }),
     };
 
@@ -93,13 +127,16 @@ function List(props: ListProps) {
         const newTasks = tasks.filter((task: TaskObject) => {
           return task.id !== data.id;
         });
+        setError(false);
         clearTimeout(messageTimeOut);
         setDeleteStatus('Task is successfully deleted!');
         setShowMessage(true);
         setTasks(newTasks);
       })
       .catch((err) => {
+        clearTimeout(messageTimeOut);
         setDeleteStatus(`Something went wrong! Couldn't delete the task.`);
+        setShowMessage(true);
         setError(true);
         console.log(err.message);
       })
@@ -120,16 +157,17 @@ function List(props: ListProps) {
       {showMessage &&
         <Message status={deleteStatus} deleteError={error} showMessage={showMessage} handleCallBack={MessageCallBack}/>
       }
-      <ul className="mt-5 mb-4 list-group list">
+      <ul className="mb-4 list-group list">
         {!isLoading && !filteredTasks.length ?
           <p className="text-center">There is no any tasks here!</p>
           :
           (filteredTasks.map((task: TaskObject) => {
             return (
-              <li className="list-group-item list__item" key={task.id}>
-                <label className="me-3 list__label" onClick={() => handleCheckbox(task)}>
-                  <input className="form-check-input list__input" defaultChecked={task.completed || checked}
-                         type="checkbox"/>
+              <li className={`list-group-item list__item ${props.selectedAll ? 'list__item-color' : '' }`}
+                  key={task.id}>
+                <label className="me-3 list__label">
+                  <input className="form-check-input list__input" checked={task.completed}
+                         type="checkbox" onChange={() => handleCheckbox(task)} />
                   <span className="ms-3 list__text">{task.todo}</span>
                 </label>
                 <div className="list__icons">

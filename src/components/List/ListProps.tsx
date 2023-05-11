@@ -1,3 +1,7 @@
 export default interface ListProps {
-  searchTaskValue: string
+  searchTaskValue: string,
+  selectedAll: boolean,
+  removeAll: boolean,
+  handleSelectAllCallBack: Function,
+  handleDeleteAllCallBack: Function
 }
