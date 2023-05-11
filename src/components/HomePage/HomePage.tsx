@@ -3,12 +3,23 @@ import Search from '../Search/Search';
 import {NavLink} from 'react-router-dom';
 import List from '../List/List';
 import React, {useState} from 'react';
+import ListHeader from '../ListHeader/ListHeader';
 
 function HomePage() {
   const [searchTaskValue, setSearchTaskValue] = useState('');
+  const [selectedAll, setSelectedAll] = useState(false);
+  const [removeAll, setRemoveAllTask] = useState(false);
 
   function taskValueCallBack(taskValue: string) {
     setSearchTaskValue(taskValue);
+  }
+
+  function selectAllCallBack(selectAllTask:boolean) {
+    setSelectedAll(selectAllTask);
+  }
+
+  function removeAllCallBack(removeAllTask:boolean) {
+    setRemoveAllTask(removeAllTask);
   }
 
   return(
@@ -22,7 +33,9 @@ function HomePage() {
             <span>Add New Task</span>
           </button>
         </NavLink>
-        <List searchTaskValue={searchTaskValue} />
+        <ListHeader handleCallBack={selectAllCallBack} handleRemoveCallBack={removeAllCallBack} selectedAll={selectedAll}/>
+        <List searchTaskValue={searchTaskValue} selectedAll={selectedAll} removeAll={removeAll}
+              handleSelectAllCallBack={selectAllCallBack} handleDeleteAllCallBack={removeAllCallBack}/>
       </div>
     </div>
   );
