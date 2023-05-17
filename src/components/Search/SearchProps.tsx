@@ -1,3 +1,3 @@
 export default interface SearchProps {
-  handleCallBack: Function
+  handleCallBack: Function;
 }
