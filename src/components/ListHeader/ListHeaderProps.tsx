@@ -1,5 +1,5 @@
 export default interface ListHeaderProps {
-  handleCallBack: Function,
-  handleRemoveCallBack: Function,
-  selectedAll: boolean
+  handleCallBack: Function;
+  handleRemoveCallBack: Function;
+  selectedAll: boolean;
 }

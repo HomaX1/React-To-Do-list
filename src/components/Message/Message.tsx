@@ -3,7 +3,7 @@ import './Message.scss';
 import MessageProps from './MessageProps';
 
 function Message(props: MessageProps) {
-  const isShowMessage:boolean = false;
+  const isShowMessage: boolean = false;
 
   if (props.showMessage) {
     props.handleCallBack(isShowMessage);

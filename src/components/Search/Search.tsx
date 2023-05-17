@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import SearchProps from './SearchProps';
 
 function Search(props: SearchProps) {
@@ -13,9 +13,16 @@ function Search(props: SearchProps) {
 
   return (
     <div data-testid="Search" className="mb-3">
-      <input className="form-control list__input" type="text" placeholder="Search" defaultValue={searchValue}
-             onKeyUp={e => handleKeyUp(e)}/>
+      <input
+        className="form-control list__input"
+        type="text"
+        name="search-field"
+        placeholder="Search"
+        defaultValue={searchValue}
+        onKeyUp={(e) => handleKeyUp(e)}
+      />
     </div>
-)}
+  );
+}
 
 export default Search;

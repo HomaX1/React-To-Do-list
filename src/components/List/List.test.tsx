@@ -8,9 +8,16 @@ describe('<List />', () => {
   function removeAllCallBack() {}
 
   test('it should mount', () => {
-    render(<List searchTaskValue='' selectedAll={false} removeAll={false} handleSelectAllCallBack={selectAllCallBack}
-                 handleDeleteAllCallBack={removeAllCallBack}/>);
-    
+    render(
+      <List
+        searchTaskValue=""
+        selectedAll={false}
+        removeAll={false}
+        handleSelectAllCallBack={selectAllCallBack}
+        handleDeleteAllCallBack={removeAllCallBack}
+      />
+    );
+
     const list = screen.getByTestId('List');
 
     expect(list).toBeInTheDocument();

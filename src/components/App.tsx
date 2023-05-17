@@ -1,5 +1,4 @@
 import React from 'react';
-import '../scss/App.scss';
 import Tabs from './Tabs/Tabs';
 import { Outlet } from 'react-router-dom';
 

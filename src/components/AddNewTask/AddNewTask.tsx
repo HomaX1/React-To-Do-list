@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import './AddNewTask.scss';
-import {useForm, SubmitHandler} from 'react-hook-form';
-import NewTaskInterface from './NewTaskInterface';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import INewTask from './AddNewTask.model';
 import Requests from '../Services/Requests';
-import {useNavigate, useLocation} from 'react-router-dom';
-import OptionObject from '../Services/OptionObjectInterface';
+import { useNavigate, useLocation } from 'react-router-dom';
+import IRequestOption from '../Services/RequestOption.model';
 
 function AddNewTask() {
   const navigate = useNavigate();
@@ -15,12 +15,9 @@ function AddNewTask() {
     setFocus,
     watch,
     formState: { errors },
-  } = useForm<NewTaskInterface>();
+  } = useForm<INewTask>();
 
-  console.log(watch('taskName'));
-
-  const location = useLocation();
-  const editTaskName = location.state;
+  const editTaskName = useLocation().state;
   const [isDisable, setIsDisable] = useState(false);
   let taskNameValue = watch('taskName');
 
@@ -33,20 +30,23 @@ function AddNewTask() {
     }
   }, [setFocus, editTaskName, taskNameValue]);
 
-  function newTaskSubmit(newTask:NewTaskInterface): SubmitHandler<NewTaskInterface> | void {
-    const capitalizedTaskName = newTask.taskName.charAt(0).toUpperCase() + newTask.taskName.slice(1);
+  function newTaskSubmit(newTask: INewTask): SubmitHandler<INewTask> | void {
+    const capitalizedTaskName =
+      newTask.taskName.charAt(0).toUpperCase() + newTask.taskName.slice(1);
     const getId = Math.floor(Math.random() * 100);
     let putUrlPath = '';
-    let requestObject: OptionObject;
+    let requestObject: IRequestOption;
 
     if (editTaskName) {
-      const taskToDo = newTask.taskName ? capitalizedTaskName : editTaskName.todo;
+      const taskToDo = newTask.taskName
+        ? capitalizedTaskName
+        : editTaskName.todo;
       putUrlPath = `${srcPath}/${editTaskName.id}`;
       requestObject = {
         method: 'PUT',
         body: JSON.stringify({
           todo: taskToDo,
-        })
+        }),
       };
     } else {
       putUrlPath = `${srcPath}/add`;
@@ -55,18 +55,18 @@ function AddNewTask() {
         body: JSON.stringify({
           todo: capitalizedTaskName,
           completed: false,
-          userId: getId
-        })
+          userId: getId,
+        }),
       };
     }
 
     Requests(putUrlPath, requestObject)
       .then((data) => {
-        navigate('/', {state: data});
+        navigate('/', { state: data });
       })
       .catch((err) => {
         console.log(err.message, 'error');
-      })
+      });
   }
 
   return (
@@ -74,20 +74,28 @@ function AddNewTask() {
       <h1 className="h1 pt-4 title new-task__title">Add New task</h1>
       <form className="new-task__form" onSubmit={handleSubmit(newTaskSubmit)}>
         <label className="mb-3 new-task__label">
-          <input className="form-control new-task__input"
-                 {...register('taskName', {minLength: 3})}
-                 defaultValue={editTaskName ? editTaskName.todo : ''}
-                 type="text"
-                 placeholder="Task name"/>
+          <input
+            className="form-control new-task__input"
+            {...register('taskName', { minLength: 3 })}
+            defaultValue={editTaskName ? editTaskName.todo : ''}
+            type="text"
+            placeholder="Task name"
+          />
         </label>
-        {errors.taskName && <p className="text-danger">Task should have minimum 3 characters</p>}
-        <button className="btn btn-primary new-task__submit" type="submit" disabled={isDisable || !taskNameValue}>
+        {errors.taskName && (
+          <p className="text-danger">Task should have minimum 3 characters</p>
+        )}
+        <button
+          className="btn btn-primary new-task__submit"
+          type="submit"
+          disabled={isDisable || !taskNameValue}
+        >
           <i className="bi bi-plus me-1 new-task__icon"></i>
           <span className="new-task__text">Add</span>
         </button>
       </form>
     </div>
-  )
+  );
 }
 
 export default AddNewTask;
