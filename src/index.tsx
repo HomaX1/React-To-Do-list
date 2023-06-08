@@ -3,10 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import './scss/index.scss';
-import App from './components/App';
-import AddNewTask from './components/AddNewTask/AddNewTask';
-import ErrorPage from './components/Error/ErrorPage';
-import HomePage from './components/HomePage/HomePage';
+import App from './App';
+import { AddNewTask, ErrorPage, HomePage } from './pages';
 
 const router = createBrowserRouter([
   {

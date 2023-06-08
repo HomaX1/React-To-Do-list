@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import SearchProps from './SearchProps';
 
-function Search(props: SearchProps) {
+function Search({ handleCallBack }: SearchProps) {
   const [searchValue, setSearchValue] = useState('');
 
   function handleKeyUp(event: React.KeyboardEvent<HTMLInputElement>) {
     const targetElement = event.target as HTMLInputElement;
     setSearchValue(targetElement.value);
 
-    props.handleCallBack(targetElement.value);
+    handleCallBack(targetElement.value);
   }
 
   return (
@@ -19,7 +19,7 @@ function Search(props: SearchProps) {
         name="search-field"
         placeholder="Search"
         defaultValue={searchValue}
-        onKeyUp={(e) => handleKeyUp(e)}
+        onKeyUp={handleKeyUp}
       />
     </div>
   );

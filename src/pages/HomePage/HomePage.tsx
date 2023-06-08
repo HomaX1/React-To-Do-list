@@ -1,32 +1,18 @@
 import './HomePage.scss';
-import Search from '../Search/Search';
-import { NavLink } from 'react-router-dom';
-import List from '../List/List';
 import React, { useState } from 'react';
-import ListHeader from '../ListHeader/ListHeader';
+import { NavLink } from 'react-router-dom';
+import { Search, List, ListHeader } from '../../components';
 
 function HomePage() {
   const [searchTaskValue, setSearchTaskValue] = useState('');
   const [selectedAll, setSelectedAll] = useState(false);
   const [removeAll, setRemoveAllTask] = useState(false);
 
-  function taskValueCallBack(taskValue: string) {
-    setSearchTaskValue(taskValue);
-  }
-
-  function selectAllCallBack(selectAllTask: boolean) {
-    setSelectedAll(selectAllTask);
-  }
-
-  function removeAllCallBack(removeAllTask: boolean) {
-    setRemoveAllTask(removeAllTask);
-  }
-
   return (
     <div className="home">
       <h1 className="h1 pt-4 title home__title">To-Do List</h1>
       <div className="home__wrap">
-        <Search handleCallBack={taskValueCallBack} />
+        <Search handleCallBack={setSearchTaskValue} />
         <NavLink to={`/add-new-task`} className="home__link">
           <button className="btn btn-primary home__button">
             <i className="bi bi-plus me-1"></i>
@@ -34,16 +20,15 @@ function HomePage() {
           </button>
         </NavLink>
         <ListHeader
-          handleCallBack={selectAllCallBack}
-          handleRemoveCallBack={removeAllCallBack}
-          selectedAll={selectedAll}
+          handleCallBack={setSelectedAll}
+          handleRemoveCallBack={setRemoveAllTask}
         />
         <List
           searchTaskValue={searchTaskValue}
           selectedAll={selectedAll}
           removeAll={removeAll}
-          handleSelectAllCallBack={selectAllCallBack}
-          handleDeleteAllCallBack={removeAllCallBack}
+          handleSelectAllCallBack={setSelectedAll}
+          handleDeleteAllCallBack={setRemoveAllTask}
         />
       </div>
     </div>

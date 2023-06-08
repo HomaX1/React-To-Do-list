@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import './List.scss';
 import ITask from './List.model';
-import Requests from '../Services/Requests';
-import Message from '../Message/Message';
+import { Message } from '../index';
+import { Requests } from '../../Services';
 import ListProps from './ListProps';
 import { useNavigate } from 'react-router-dom';
 
 const srcPath = 'https://dummyjson.com/todos';
 
-function List(props: ListProps) {
+function List({
+  selectedAll,
+  removeAll,
+  handleSelectAllCallBack,
+  handleDeleteAllCallBack,
+  searchTaskValue,
+}: ListProps) {
   const optionsGET = {
     method: 'GET',
   };
@@ -37,21 +43,17 @@ function List(props: ListProps) {
         });
     }
 
-    if (props.selectedAll && props.removeAll) {
-      const selectAllTasks: boolean = !props.selectedAll;
-      const removeAllTasks: boolean = !props.removeAll;
+    if (selectedAll && removeAll) {
+      const selectAllTasks: boolean = !selectedAll;
+      const removeAllTasks: boolean = !removeAll;
 
-      props.handleSelectAllCallBack(selectAllTasks);
-      props.handleDeleteAllCallBack(removeAllTasks);
+      handleSelectAllCallBack(selectAllTasks);
+      handleDeleteAllCallBack(removeAllTasks);
     }
-  }, [
-    fetchTasks,
-    props.handleSelectAllCallBack,
-    props.handleDeleteAllCallBack,
-  ]);
+  }, [fetchTasks, selectedAll, removeAll]);
 
-  if (props.searchTaskValue.length) {
-    filteredTasks = getFilteredTask(props.searchTaskValue, tasks);
+  if (searchTaskValue.length) {
+    filteredTasks = getFilteredTask(searchTaskValue, tasks);
   } else {
     filteredTasks = tasks;
   }
@@ -64,13 +66,13 @@ function List(props: ListProps) {
     );
   }
 
-  if (props.selectedAll && props.removeAll) {
+  if (selectedAll && removeAll) {
     removeAllTasks();
   }
 
   function getFilteredTask(searchValue: string, tasks: ITask[]) {
     return tasks.filter((task: ITask) => {
-      return task.todo.toLowerCase().indexOf(`${props.searchTaskValue}`) !== -1;
+      return task.todo.toLowerCase().indexOf(`${searchTaskValue}`) !== -1;
     });
   }
 
@@ -88,17 +90,17 @@ function List(props: ListProps) {
       .then(() => {
         const newTasks: ITask[] = [];
         setError(false);
-        clearTimeout(messageTimeOut);
         setDeleteStatus('All tasks are successfully deleted!');
-        setShowMessage(true);
         setTasks(newTasks);
       })
       .catch((err) => {
-        clearTimeout(messageTimeOut);
-        setDeleteStatus(`Current API doesn't support Delete All method.`);
-        setShowMessage(true);
         setError(true);
+        setDeleteStatus(`Current API doesn't support Delete All method.`);
         console.log(err.message);
+      })
+      .finally(() => {
+        clearTimeout(messageTimeOut);
+        ShowNotificationMessage();
       });
   }
 
@@ -137,17 +139,17 @@ function List(props: ListProps) {
           return task.id !== data.id;
         });
         setError(false);
-        clearTimeout(messageTimeOut);
         setDeleteStatus('Task is successfully deleted!');
-        setShowMessage(true);
         setTasks(newTasks);
       })
       .catch((err) => {
-        clearTimeout(messageTimeOut);
         setDeleteStatus(`Something went wrong! Couldn't delete the task.`);
-        setShowMessage(true);
         setError(true);
         console.log(err.message);
+      })
+      .finally(() => {
+        clearTimeout(messageTimeOut);
+        ShowNotificationMessage();
       });
   }
 
@@ -155,22 +157,17 @@ function List(props: ListProps) {
     navigate('/add-new-task', { state: currentTask });
   }
 
-  function MessageCallBack(childData: boolean) {
+  function ShowNotificationMessage() {
+    setShowMessage(true);
+
     messageTimeOut = setTimeout(() => {
-      setShowMessage(childData);
+      setShowMessage(false);
     }, 5000);
   }
 
   return (
     <div data-testid="List">
-      {showMessage && (
-        <Message
-          status={deleteStatus}
-          deleteError={error}
-          showMessage={showMessage}
-          handleCallBack={MessageCallBack}
-        />
-      )}
+      {showMessage && <Message status={deleteStatus} deleteError={error} />}
       <ul className="mb-4 list-group list">
         {!isLoading && !filteredTasks.length ? (
           <p className="text-center">There is no any tasks here!</p>
@@ -179,7 +176,7 @@ function List(props: ListProps) {
             return (
               <li
                 className={`list-group-item list__item ${
-                  props.selectedAll ? 'list__item-color' : ''
+                  selectedAll ? 'list__item-color' : ''
                 }`}
                 key={task.id}
               >

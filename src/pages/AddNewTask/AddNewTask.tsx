@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AddNewTask.scss';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import INewTask from './AddNewTask.model';
-import Requests from '../Services/Requests';
+import { Requests } from '../../Services';
 import { useNavigate, useLocation } from 'react-router-dom';
-import IRequestOption from '../Services/RequestOption.model';
+import IRequestOption from '../../Services/RequestOption.model';
 
 function AddNewTask() {
   const navigate = useNavigate();
   const srcPath = 'https://dummyjson.com/todos';
+  const nameOfTask = 'taskName';
   const {
     register,
     handleSubmit,
@@ -19,10 +20,10 @@ function AddNewTask() {
 
   const editTaskName = useLocation().state;
   const [isDisable, setIsDisable] = useState(false);
-  let taskNameValue = watch('taskName');
+  let taskNameValue = watch(nameOfTask);
 
-  React.useEffect(() => {
-    setFocus('taskName');
+  useEffect(() => {
+    setFocus(nameOfTask);
     if (editTaskName && taskNameValue === editTaskName.todo) {
       setIsDisable(true);
     } else {
@@ -30,7 +31,7 @@ function AddNewTask() {
     }
   }, [setFocus, editTaskName, taskNameValue]);
 
-  function newTaskSubmit(newTask: INewTask): SubmitHandler<INewTask> | void {
+  function newTaskSubmit(newTask: INewTask) {
     const capitalizedTaskName =
       newTask.taskName.charAt(0).toUpperCase() + newTask.taskName.slice(1);
     const getId = Math.floor(Math.random() * 100);
@@ -77,12 +78,12 @@ function AddNewTask() {
           <input
             className="form-control new-task__input"
             {...register('taskName', { minLength: 3 })}
-            defaultValue={editTaskName ? editTaskName.todo : ''}
+            defaultValue={editTaskName?.todo || ''}
             type="text"
             placeholder="Task name"
           />
         </label>
-        {errors.taskName && (
+        {errors?.taskName && (
           <p className="text-danger">Task should have minimum 3 characters</p>
         )}
         <button
