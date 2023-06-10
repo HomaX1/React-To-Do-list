@@ -1,28 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './ListHeader.scss';
 import ListHeaderProps from './ListHeaderProps';
 
-function ListHeader(props: ListHeaderProps) {
+function ListHeader({ handleCallBack, handleRemoveCallBack }: ListHeaderProps) {
   const [checked, setCheckboxChange] = useState(false);
   const [removingTasks, setRemovingTasks] = useState(false);
 
-  if (removingTasks) {
-    setCheckboxChange(false);
-    setRemovingTasks(false);
-  }
+  useEffect(() => {
+    if (removingTasks) {
+      setCheckboxChange(false);
+      setRemovingTasks(false);
+    }
+  }, [removingTasks]);
 
   function handleCheckbox() {
     const checkboxChange = !checked;
 
     setCheckboxChange(checkboxChange);
-    props.handleCallBack(checkboxChange);
+    handleCallBack(checkboxChange);
   }
 
   function handleRemoveAllTasks() {
     const isRemove = !removingTasks;
 
     setRemovingTasks(isRemove);
-    props.handleRemoveCallBack(isRemove);
+    handleRemoveCallBack(isRemove);
   }
 
   return (
